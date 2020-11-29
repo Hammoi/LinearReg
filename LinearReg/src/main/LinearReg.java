@@ -1,37 +1,66 @@
 package main;
 
+import java.text.DecimalFormat;
+
 public class LinearReg {
+	private static final int sampleSize = 20;
+	private static final boolean loosenCriteria = false;
+	
+	private static double[] x = new double[sampleSize];
+	private static double[] y = new double[sampleSize];
 
-	private static final int[] x = {2,4,5,8,10,12,15,17,38,58,67,73,85,94,104};
-	private static final int[] y = {52,102,127,202,252,302,377,427,952,1452,1677,1827,2127,2352,2602};
-
-	private static double m = 1; //theta 1
-	private static double b = 3; //theta 0
+	private static double m = 0; //theta 1
+	private static double b = 0; //theta 0
 
 	public static void main(String[] args) {
 		//LINEAR REGRESSION
 		//mx+b
+		
+		double[][] data = CreateData.genRandData(sampleSize);
+		x = data[0];
+		y = data[1];
+		
+		
 		if(!(x.length == y.length)) {
 			System.out.println("Faulty data. Abort!!");
 			return;
 		}
 
-
+		
 
 
 		double learningRate = 0.0001;
-		while(cost() > 0.0001) {
+		double criteria = 0.0000000000000001;
+		int runs = 0;
+		int lap = 0;
+		
+		System.out.println("Starting linear regression.\n");
+		
+		long time = System.currentTimeMillis();
+		
+		while(cost() > criteria) {
 			double mDerivative = derivative(learningRate, x, y, m, false);
 			double bDerivative = derivative(learningRate, x, y, b, true);
-			System.out.println("m deriv: " + mDerivative + ", b deriv: " + bDerivative);
+			//System.out.println("m deriv: " + mDerivative + ", b deriv: " + bDerivative);
 			m -= mDerivative;
 			b -= bDerivative;
 
-			System.out.println("cost: " + cost());
-		}
+			runs++;
+			
+			if(runs > 100000) {
+				criteria = loosenCriteria ? criteria * 2 : criteria;
+				runs = 0;
+				lap += 1;
+			}
+			
+			
 		
-		System.out.println(Math.round(m) + "x + " + Math.round(b));
-
+			
+		}
+		System.out.println("Complete\ncost: " + cost() + ", run #" + (100000 * lap + runs) + ", took " + (System.currentTimeMillis() - time) + " milleseconds.");
+		DecimalFormat df = new DecimalFormat("#.###");
+		System.out.println(df.format(m) + "x + " + df.format(b));
+		
 
 	}
 
@@ -54,7 +83,7 @@ public class LinearReg {
 		return d;
 	}
 	
-	private static double derivative(double lr, int[] x, int[]y, double m, boolean constant) {
+	private static double derivative(double lr, double[] x, double[]y, double m, boolean constant) {
 
 
 		if(constant) {
