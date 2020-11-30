@@ -1,11 +1,10 @@
 package main;
 
 import java.text.DecimalFormat;
-import java.util.InputMismatchException;
 import java.util.Scanner; 
 
 public class LinearReg {
-	private static final boolean useRandomData = false; 				//Generate random data?
+	private static final boolean useRandomData = true; 				//Generate random data?
 	private static final int sampleSize = 40; 							//Size of sample
 	private static final boolean loosenCriteria = true;					//Loosen criteria if no equation found after every *loosenLap* runs?
 	private static final int loosenLap = 100000; 						//How many runs before criteria is loosened
@@ -38,23 +37,22 @@ public class LinearReg {
 			System.out.println("Enter m value:");
 			
 			
-			
-			try {
-				inputM = input.nextDouble();
-			} catch(InputMismatchException e) {
-				System.out.println("Invalid m value.");
+			while(!input.hasNextDouble()) {
+				input.next();
+				System.out.println("invalid value.");
 			}
-
+			inputM = input.nextDouble();
+			
 			System.out.println("Enter b value:");
 
-			try {
-				inputB = input.nextDouble();
-			} catch(InputMismatchException e) {
-				System.out.println("Invalid b value.");
+			while(!input.hasNextDouble()) {
+				input.next();
+				System.out.println("invalid value.");
 			}
+			inputB = input.nextDouble();
 
 
-			data = CreateData.genData(inputM, inputB, sampleSize);
+			data = CreateData.genData(inputM, inputB, sampleSize); //The program does not know these values
 			input.close();
 		}
 
@@ -129,22 +127,21 @@ public class LinearReg {
 
 	private static double derivative(double lr, double[] x, double[]y, double m, boolean constant) {
 
-
+		double sum = 0;
+		
 		if(constant) {
 
-			double sum = 0;
 			for(int i = 0; i < x.length; i++) {
 
 				//System.out.println(i + " " + (currentFunction(x[i]) - y[i]));
 				sum += currentFunction(x[i]) - y[i];
 			}
 			//System.out.println("b sum: " + sum);
-			double d = (lr * sum) / x.length;
-			return d;
+
 
 		} else {
 
-			double sum = 0;
+
 			for(int i = 0; i < x.length; i++) {
 				//System.out.println(i + " " + (currentFunction(x[i]) - y[i]));
 				sum += (currentFunction(x[i]) - y[i]) * x[i];
@@ -152,10 +149,10 @@ public class LinearReg {
 
 			//System.out.println("m sum: " + sum);
 
-			double d = (lr * sum) / x.length;
-			return d;
-
 		}
+		
+		double d = (lr * sum) / x.length;
+		return d;
 
 	}
 

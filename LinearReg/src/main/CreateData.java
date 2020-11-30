@@ -11,8 +11,8 @@ public class CreateData {
 		
 		DecimalFormat df = new DecimalFormat("#.##");
 		
-		double m = Double.parseDouble(df.format(Math.random()*variableRange));
-		double b = Double.parseDouble(df.format(Math.random()*variableRange)); 
+		double m = (Math.round(Math.random()) == 0) ? Double.parseDouble(df.format(Math.random()*variableRange)) : -Double.parseDouble(df.format(Math.random()*variableRange));
+		double b = (Math.round(Math.random()) == 0) ? Double.parseDouble(df.format(Math.random()*variableRange)) : -Double.parseDouble(df.format(Math.random()*variableRange));; 
 		
 		return genData(m,b,size);
 	}
@@ -21,19 +21,33 @@ public class CreateData {
 		
 		System.out.println("Using function " + m + "x + " + b + ".");
 		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		double[] x = new double[size];
 		double[] y = new double[size];
+		
 		
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		System.out.println("\nData values:");
 		
 		for(int i = 0; i < size; i++) {
-			x[i] = Double.parseDouble(df.format(Math.random()*inputRange));
+			x[i] = (Math.round(Math.random()) == 0) ? Double.parseDouble(df.format(Math.random()*inputRange)) : -Double.parseDouble(df.format(Math.random()*inputRange));
 			y[i] = m * x[i] + b;
 			System.out.println(x[i] + " | " + y[i]);
 			
 		}
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		
 		return new double[][] {x,y};
 		
